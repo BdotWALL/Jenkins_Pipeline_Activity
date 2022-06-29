@@ -1,19 +1,39 @@
 pipeline {
-node {
-    stage "Create build output"
-    
-    // Make the output directory.
-    sh "mkdir -p output"
+  agent any
+  stages {
 
-    // Write an useful file, which is needed to be archived.
-    writeFile file: "output/usefulfile.txt", text: "This file is useful, need to archive it."
+    stage('Build') {
+      steps {
+         echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
+      }
+    }
 
-    // Write an useless file, which is not needed to be archived.
-    writeFile file: "output/uselessfile.md", text: "This file is useless, no need to archive it."
+    stage('Test') {
+      steps {
+        script {
+          echo 'If you see this, test successful'
+        }
+      }
+    }
 
-    stage "Archive build output"
-    
-    // Archive the build output artifacts.
-    archiveArtifacts artifacts: 'output/*.txt', excludes: 'output/*.md'
-}
+  }
+
+post {
+        always {
+            echo 'One way or another, I have finished'
+            deleteDir() /* clean up our workspace */
+        }
+        success {
+            echo 'I succeeded!'
+        }
+        unstable {
+            echo 'I am unstable :/'
+        }
+        failure {
+            echo 'I failed :('
+        }
+        changed {
+            echo 'Things were different before...'
+        }
+    }
 }
