@@ -21,7 +21,7 @@ pipeline {
   }
 
   post {
-    sucess {
+    success {
         mail to: 'brwall92@gmail.com',
              subject: "Failed Pipeline: ${currentBuild.fullDisplayName}",
              body: "it worked ${env.BUILD_URL}"
